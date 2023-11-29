@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	args := os.Args[1:]
+	args := os.Args
 
 	if len(args) < 1 {
 		fmt.Println("No tgit command found")
@@ -14,7 +14,7 @@ func main() {
 		return
 	}
 
-	switch args[0] {
+	switch args[1] {
 	case "init":
 		{
 			err := initRepository()
@@ -25,6 +25,14 @@ func main() {
 	case "help":
 		{
 			displayHelp()
+		}
+
+	case "add":
+		{
+			err := add(args[2:])
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	default:
 		{
@@ -42,6 +50,10 @@ func initRepository() error {
 	}
 
 	contents := []string{"objects/", "refs/"}
+	_, err = os.Create(".tgit/INDEX")
+	if err != nil {
+		return err
+	}
 
 	for _, c := range contents {
 		err := os.MkdirAll(".tgit/"+c, os.ModePerm)
@@ -49,6 +61,7 @@ func initRepository() error {
 			return fmt.Errorf("Unable to create %s", c)
 		}
 	}
+	fmt.Println("Initialised an empty tgit repository")
 	return nil
 }
 
