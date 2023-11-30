@@ -3,23 +3,26 @@ package main
 import (
 	"bytes"
 	"encoding/gob"
+	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"os"
+)
+
+type FileType string
+
+const (
+	Blob FileType = "blob"
+	Tree FileType = "tree"
 )
 
 type Staged struct {
 	Filename string
 	Hash     string
-	// filetype ?
+	FileType FileType
 }
 
 func add(fargs []string) error {
-	if !repoExists() {
-		return fmt.Errorf("Repository not initialized")
-	}
-
 	idxinfo, err := os.Stat(".tgit/INDEX")
 	if err != nil {
 		return err
@@ -37,7 +40,6 @@ func add(fargs []string) error {
 
 	// Read INDEX file
 	if filesize > 0 {
-		fmt.Println("File size > 0")
 		b := make([]byte, filesize)
 
 		_, err = idxf.Read(b)
@@ -51,32 +53,26 @@ func add(fargs []string) error {
 		dec := gob.NewDecoder(buf)
 
 		if err := dec.Decode(&staged); err != nil {
-			return fmt.Errorf("Unable to decode INDEX file")
+			return fmt.Errorf("Unable to decode INDEX file, %v", err)
 		}
 
-		fmt.Printf("Read from index file %v", staged)
 	}
 
 	// Stage
 	for _, farg := range fargs {
-		f, err := os.Open(farg)
+		hash, err := fileSha1(farg)
 		if err != nil {
-			return fmt.Errorf("Unable to open %s %d", farg, err)
-		}
-		defer f.Close()
-
-		contents, err := io.ReadAll(f)
-		if err != nil {
-			return fmt.Errorf("Unable to read %s %d", farg, err)
+			return err
 		}
 
-		hash := getSha1(contents)
+		if _, err := os.Stat(".tgit/objects/" + hash); errors.Is(err, fs.ErrExist) {
+			fmt.Printf("No latest change in %v\n", farg)
+			continue
+		}
 
-		if _, ok := staged[hash]; ok {
-			fmt.Printf("%v already staged\n", farg)
-		} else {
+		if canStage(farg, hash, staged) {
 			fmt.Printf("Added %v\n", farg)
-			staged[hash] = Staged{Filename: farg, Hash: hash}
+			staged[farg] = Staged{Filename: farg, Hash: hash, FileType: Blob}
 		}
 	}
 
@@ -88,15 +84,23 @@ func add(fargs []string) error {
 		return fmt.Errorf("Unable to perform staging")
 	}
 
-	if err := os.Truncate(".tgit/INDEX", 0); err != nil {
-		return fmt.Errorf("Unable to clear contents of INDEX file %v", err)
-	}
-
 	if _, err := idxf.Write(buf.Bytes()); err != nil {
 		return fmt.Errorf("Unable to write to INDEX file")
 	}
 
-	fmt.Println("Staging completed")
-
 	return nil
+}
+
+func canStage(file string, fileHash string, staged map[string]Staged) bool {
+	if _, err := os.Stat(".tgit/objects/" + fileHash); err == nil {
+		fmt.Printf("No latest change in %v\n", file)
+		return false
+	}
+
+	if _, ok := staged[file]; ok {
+		fmt.Printf("%v already added\n", file)
+		return false
+	}
+
+	return true
 }

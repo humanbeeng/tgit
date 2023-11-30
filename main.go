@@ -17,7 +17,7 @@ func main() {
 	switch args[1] {
 	case "init":
 		{
-			err := initRepository()
+			err := initRepo()
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -29,40 +29,35 @@ func main() {
 
 	case "add":
 		{
+			if !repoExists() {
+				fmt.Println("Repository not initialized")
+				return
+			}
+
 			err := add(args[2:])
 			if err != nil {
 				fmt.Println(err)
 			}
 		}
+
+	case "commit":
+		{
+			if !repoExists() {
+				fmt.Println("Repository not initialized")
+				return
+			}
+
+			if err := commit(args[2:]); err != nil {
+				fmt.Println(err)
+			}
+		}
+
 	default:
 		{
 			fmt.Println("Invalid command", args[0])
 			displayHelp()
 		}
 	}
-}
-
-func initRepository() error {
-	// create .tgit folder
-	err := os.Mkdir(".tgit", os.ModePerm)
-	if err != nil {
-		return fmt.Errorf("Unable to init repository")
-	}
-
-	contents := []string{"objects/", "refs/"}
-	_, err = os.Create(".tgit/INDEX")
-	if err != nil {
-		return err
-	}
-
-	for _, c := range contents {
-		err := os.MkdirAll(".tgit/"+c, os.ModePerm)
-		if err != nil {
-			return fmt.Errorf("Unable to create %s", c)
-		}
-	}
-	fmt.Println("Initialised an empty tgit repository")
-	return nil
 }
 
 func displayHelp() {

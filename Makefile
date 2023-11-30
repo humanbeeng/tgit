@@ -4,5 +4,6 @@ build:
 clean:
 	rm -rf .tgit/
 
-display:
-	ls -a -r .tgit
+disp:
+	ls -lR .tgit
+
