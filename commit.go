@@ -25,7 +25,7 @@ type CommitObject struct {
 func commit(args []string) error {
 	// Check if message is passed
 	if len(args) == 0 {
-		return fmt.Errorf("Commit message not found")
+		return fmt.Errorf("No commit message found. Aborting!")
 	}
 
 	// Get staged files
