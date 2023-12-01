@@ -58,7 +58,7 @@ func add(fargs []string) error {
 
 	}
 
-	// Stage
+	// Stage each files
 	for _, farg := range fargs {
 		hash, err := fileSha1(farg)
 		if err != nil {
