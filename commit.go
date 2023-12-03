@@ -110,6 +110,11 @@ func commit(args []string) error {
 
 	}
 
+	// Write tree-object to a file
+	if err := os.WriteFile(".tgit/objects/"+stageHash, idx, fs.ModePerm); err != nil {
+		return fmt.Errorf("Unable to create tree-object")
+	}
+
 	// Write commit-object to a file
 	cmtFile, err := os.OpenFile(".tgit/objects/"+cmtHash, os.O_CREATE|os.O_RDWR, fs.ModePerm)
 	if err != nil {
