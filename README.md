@@ -10,6 +10,6 @@ Commands
 
 
 
-![example workflow](https://github.com/github/docs/actions/workflows/go.yml/badge.svg)
+![Go build](https://github.com/humanbeeng/tgit/actions/workflows/go.yml/badge.svg)
 
 
