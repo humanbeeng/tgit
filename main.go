@@ -24,7 +24,16 @@ func main() {
 		}
 	case "help":
 		{
+			if !repoExists() {
+				fmt.Println("Repository not initialized")
+				return
+			}
 			displayHelp()
+		}
+
+	case "checkout":
+		{
+			checkout(args[2:])
 		}
 
 	case "add":

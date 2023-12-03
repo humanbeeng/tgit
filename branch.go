@@ -11,6 +11,10 @@ func branch(args []string) error {
 		return fmt.Errorf("Branch name required\n")
 	}
 
+	if branchExists(args[0]) {
+		return fmt.Errorf("Branch %v already exists", args[0])
+	}
+
 	// Get the current branch
 	headInf, err := os.Stat(".tgit/refs/HEAD")
 	if err != nil {
@@ -57,4 +61,12 @@ func branch(args []string) error {
 	fmt.Printf("%v created \n", args[0])
 
 	return nil
+}
+
+func branchExists(branch string) bool {
+	_, err := os.Stat(".tgit/refs/heads/" + branch)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
 }

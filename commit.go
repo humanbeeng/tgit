@@ -9,13 +9,6 @@ import (
 	"os"
 )
 
-/*
-Git commit flow
-Check the branch head if it has any head
-
-if head exists, add that to the tree-object
-*/
-
 type CommitObject struct {
 	Message     string
 	TreeHash    string
@@ -69,7 +62,7 @@ func commit(args []string) error {
 		}
 	}
 
-	var staged map[string]Staged
+	var staged map[string]TreeItem
 
 	idxbuf := bytes.NewBuffer(idx)
 	idxdec := gob.NewDecoder(idxbuf)
@@ -110,13 +103,18 @@ func commit(args []string) error {
 
 	}
 
-	// Write commit-object to a file
+	// Write tree-object to a file
+	if err := os.WriteFile(".tgit/objects/"+stageHash, idx, fs.ModePerm); err != nil {
+		return fmt.Errorf("Unable to create tree-object")
+	}
+
 	cmtFile, err := os.OpenFile(".tgit/objects/"+cmtHash, os.O_CREATE|os.O_RDWR, fs.ModePerm)
 	if err != nil {
 		return fmt.Errorf("Unable to open commit object, %v", err)
 	}
 	defer cmtFile.Close()
 
+	// Write commit-object to a file
 	cobuf := new(bytes.Buffer)
 	cog := gob.NewEncoder(cobuf)
 
