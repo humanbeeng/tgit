@@ -44,19 +44,9 @@ func commit(args []string) error {
 		return err
 	}
 
-	headFile, err := os.OpenFile(".tgit/refs/HEAD", os.O_RDWR, fs.ModePerm)
+	currBranch, err := currBranch(headInf)
 	if err != nil {
-		return fmt.Errorf("Unable to read HEAD file")
-	}
-	defer headFile.Close()
-
-	// Get the curr branch name
-	var currBranch string
-	if headInf.Size() > 0 {
-		sc := bufio.NewScanner(headFile)
-		for sc.Scan() {
-			currBranch = sc.Text()
-		}
+		return err
 	}
 
 	if _, err := os.Stat(".tgit/refs/heads/" + currBranch); err != nil {

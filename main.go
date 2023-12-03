@@ -52,6 +52,18 @@ func main() {
 			}
 		}
 
+	case "branch":
+		{
+			if !repoExists() {
+				fmt.Println("Repository not initialized")
+				return
+			}
+
+			if err := branch(args[2:]); err != nil {
+				fmt.Println(err)
+			}
+		}
+
 	default:
 		{
 			fmt.Println("Invalid command", args[0])
