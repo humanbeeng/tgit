@@ -65,8 +65,5 @@ func branch(args []string) error {
 
 func branchExists(branch string) bool {
 	_, err := os.Stat(".tgit/refs/heads/" + branch)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
+	return !os.IsNotExist(err)
 }

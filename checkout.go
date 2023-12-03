@@ -13,17 +13,13 @@ func checkout(args []string) error {
 		return fmt.Errorf("No branch name found.")
 	}
 
-	fmt.Println("Checking out to", args[0])
 	if !branchExists(args[0]) {
 		fmt.Println(args[0], "does not exists")
 		return fmt.Errorf("Branch %v does not exists", args[0])
 	}
 
-	fmt.Println("After branch check")
-
 	// Get the latest commit hash from the to checkout branch
 	lch, err := os.ReadFile(".tgit/refs/heads/" + args[0])
-	fmt.Println("Latest commit hash", lch)
 	if err != nil {
 		return fmt.Errorf("Unable to get latest commit hash, %v", err)
 	}
@@ -37,7 +33,6 @@ func checkout(args []string) error {
 		for len(q) != 0 {
 			currHash := q[0]
 			q = q[1:]
-			fmt.Println("In commit: ", currHash)
 
 			// Get the commit object
 			cFile, err := os.ReadFile(".tgit/objects/" + string(currHash))
@@ -70,8 +65,7 @@ func checkout(args []string) error {
 			treeDec := gob.NewDecoder(treeBuf)
 
 			if err := treeDec.Decode(&tree); err != nil {
-				fmt.Println("Unable to decode tree object map", err)
-				return err
+				return fmt.Errorf("Unable to decode tree object map, %v", err)
 			}
 
 			// Check if the filename already exists in map. If not, add to map
@@ -82,7 +76,6 @@ func checkout(args []string) error {
 			}
 
 			if cobj.SubtreeHash != "" {
-				fmt.Println("Pushing", cobj.SubtreeHash, "to queue")
 				q = append(q, cobj.SubtreeHash)
 			}
 
