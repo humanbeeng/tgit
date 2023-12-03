@@ -81,8 +81,6 @@ func commit(args []string) error {
 		SubtreeHash: latestHash,
 	}
 
-	fmt.Println("About to commit", co)
-
 	// Create hash for the commit struct
 	cmtHash := getSha1([]byte(cmtMsg + stageHash + latestHash))
 
