@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/sha1"
 	"encoding/hex"
 	"errors"
@@ -38,4 +39,22 @@ func repoExists() bool {
 		}
 	}
 	return true
+}
+
+func currBranch(headInf fs.FileInfo) (string, error) {
+	headFile, err := os.OpenFile(".tgit/refs/HEAD", os.O_RDWR, fs.ModePerm)
+	if err != nil {
+		return "", fmt.Errorf("Unable to read HEAD file")
+	}
+	defer headFile.Close()
+
+	// Get the curr branch name
+	var currBranch string
+	if headInf.Size() > 0 {
+		sc := bufio.NewScanner(headFile)
+		for sc.Scan() {
+			currBranch = sc.Text()
+		}
+	}
+	return currBranch, nil
 }
