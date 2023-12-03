@@ -16,7 +16,7 @@ const (
 	Tree FileType = "tree"
 )
 
-type Staged struct {
+type TreeItem struct {
 	Filename string
 	Hash     string
 	FileType FileType
@@ -36,7 +36,7 @@ func add(fargs []string) error {
 
 	filesize := idxinfo.Size()
 
-	staged := make(map[string]Staged)
+	staged := make(map[string]TreeItem)
 
 	// Read INDEX file
 	if filesize > 0 {
@@ -72,7 +72,7 @@ func add(fargs []string) error {
 
 		if canStage(farg, hash, staged) {
 			fmt.Printf("Added %v\n", farg)
-			staged[farg] = Staged{Filename: farg, Hash: hash, FileType: Blob}
+			staged[farg] = TreeItem{Filename: farg, Hash: hash, FileType: Blob}
 		}
 	}
 
@@ -91,7 +91,7 @@ func add(fargs []string) error {
 	return nil
 }
 
-func canStage(file string, fileHash string, staged map[string]Staged) bool {
+func canStage(file string, fileHash string, staged map[string]TreeItem) bool {
 	if _, err := os.Stat(".tgit/objects/" + fileHash); err == nil {
 		fmt.Printf("No latest change in %v\n", file)
 		return false
