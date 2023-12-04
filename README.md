@@ -19,6 +19,14 @@ go install github.com/humanbeeng/tgit@latest
 - `checkout`: Checkouts to branch with file changes upto checked out branch head.
 - `help`: Displays a help message
 
+#### Features
+- Commits are made against the checked out branch.
+- Uncreated branch cannot be checked out to.
+- Cannot reinit a tgit repository.
+- Cannot add duplicate files to staging if they are unmodified. Only those files that are either modified or haven't been staged before can be added and the old one will be overwritten in staged area.
+- Invalid command checks.
+- Checkout <branch-name> will yield all committed files that we made upto branch-name HEAD.
+- Cannot commit an empty staged area.
 
 #### References
 [Git internals](https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain)
