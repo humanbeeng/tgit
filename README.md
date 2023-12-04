@@ -19,6 +19,15 @@ go install github.com/humanbeeng/tgit@latest
 - `checkout`: Checkouts to branch with file changes upto checked out branch head.
 - `help`: Displays a help message
 
+<div>
+    <a href="https://www.loom.com/share/79374698750b4ad88560e569ae2fe2b3">
+      <p>tgit demonstration - Click to watch video</p>
+    </a>
+    <a href="https://www.loom.com/share/79374698750b4ad88560e569ae2fe2b3">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/79374698750b4ad88560e569ae2fe2b3-with-play.gif">
+    </a>
+  </div>
+
 #### Features
 - Commits are made against the checked out branch.
 - Uncreated branch cannot be checked out to.
