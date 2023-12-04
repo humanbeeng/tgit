@@ -16,7 +16,7 @@ go install github.com/humanbeeng/tgit@latest
 - `branch`: Creates a new branch by having current branch as head.
 - `add`: Stage file(s)
 - `commit`: Commit staged files to branch.
-- `checkout`: DFS commit tree to get updated file changes and checkouts to branch.
+- `checkout`: DFS commit tree. Update file changes from all commits and checkouts to branch.
 - `help`: Displays a help message
 
 <div>
